@@ -1,0 +1,4 @@
+Model: CloudNet
+Input Size: (1, 4, 192, 192)
+Total Operations: 20.959727616 GOps
+Total Parameters: 36.448672 M

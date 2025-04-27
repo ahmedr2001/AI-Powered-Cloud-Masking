@@ -1,0 +1,4 @@
+Model: UNet
+Input Size: (1, 4, 512, 512)
+Total Operations: 437.564473344 GOps
+Total Parameters: 31.044096 M

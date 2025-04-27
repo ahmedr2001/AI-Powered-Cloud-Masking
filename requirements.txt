@@ -1,0 +1,10 @@
+torch==2.6.0+cu126
+torchvision==0.21.0+cu126
+numpy==1.26.4
+tifffile==2023.12.9
+matplotlib==3.8.2
+albumentations==2.0.5
+opencv-python==4.11.0.86
+scipy==1.15.1
+joblib==1.4.2
+pandas==2.1.4
