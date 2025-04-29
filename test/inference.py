@@ -13,6 +13,7 @@ import csv
 import argparse
 import sys
 import numpy as np
+import pandas as pd
 from cloudnet import CloudNet
 
 sys.path.insert(1, '../')
@@ -59,52 +60,44 @@ def main():
 
     print("image_dir: ", image_dir)
 
-    with open('submission.csv', 'w', newline='') as csvfile:
-        fieldnames = ['id', 'segmentation']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
+    submission_file = pd.read_csv("sample_submission.csv", dtype={'id': str})
+    rle_masks = []
+    for image_id in submission_file['id']:
+        image_filename = image_id + '.tif'
+        image_filepath = os.path.join(image_dir, image_filename)
+        image = tifffile.imread(image_filepath)
+        image = normalize_img(image)
+        image = transform(image=image)['image']
+        image = image.unsqueeze(0).to(device)
 
-        # NOTE: os.listdir() returns files in arbitrary order
-        # TODO: change this so it returns files with order specified in test data (probably from a csv file)
-        for f in sorted(os.listdir(image_dir)):
-            image_file = os.path.join(image_dir, f)
-            f_id = f.split('.')[0]
-            image = tifffile.imread(image_file)
+        with torch.no_grad():
+            output = model(image)
+            output = torch.sigmoid(output).cpu().numpy()
+            output = (output > 0.5).astype(np.uint8)
+            output = output.squeeze(0).squeeze(0)
+            output = cv2.resize(output, (256, 256), interpolation=cv2.INTER_NEAREST)
+            rle_mask = rle_encode(output)
+            rle_masks.append(rle_mask)
+            # # TODO: remove this step when running on test data
+            # # visualize image and prediction
+            # plt.figure(figsize=(10,5))
+            # plt.subplot(1,2,1)
+            # img = image.cpu().numpy().squeeze(0).transpose(1, 2, 0)
+            # # rgb
+            # img = img[..., :3]
+            # plt.imshow(img)
 
-            # Preprocess the image
-            image = normalize_img(image)
-            image = transform(image=image)['image']
-            image = image.unsqueeze(0).to(device)
+            # plt.title('Image')
+            # plt.axis('off')
+            # plt.subplot(1,2,2)
+            # plt.imshow(output, cmap='gray')
+            # plt.title('Prediction')
+            # plt.axis('off')
+            # plt.show()
 
-            with torch.no_grad():
-                output = model(image)
-                output = torch.sigmoid(output).cpu().numpy()
-                output = (output > 0.5).astype(np.uint8)
-                output = output.squeeze(0).squeeze(0)
-                output = cv2.resize(output, (256, 256), interpolation=cv2.INTER_NEAREST)
-                rle_mask = rle_encode(output)
-                writer.writerow({'id': f_id, 'segmentation': rle_mask})
-
-
-            # TODO: remove this step when running on test data
-            # visualize image and prediction
-            plt.figure(figsize=(10,5))
-            plt.subplot(1,2,1)
-            img = image.cpu().numpy().squeeze(0).transpose(1, 2, 0)
-            # rgb
-            img = img[..., :3]
-            plt.imshow(img)
-
-            plt.title('Image')
-            plt.axis('off')
-            plt.subplot(1,2,2)
-            plt.imshow(output, cmap='gray')
-            plt.title('Prediction')
-            plt.axis('off')
-            plt.show()
-
+    submission_file['segmentation'] = rle_masks
+    submission_file.to_csv('submission.csv', index=False)
     print("done")
-
 
 if __name__ == "__main__":
     main()
