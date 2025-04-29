@@ -64,6 +64,8 @@ def main():
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
 
+        # NOTE: os.listdir() returns files in arbitrary order
+        # TODO: change this so it returns files with order specified in test data (probably from a csv file)
         for f in sorted(os.listdir(image_dir)):
             image_file = os.path.join(image_dir, f)
             f_id = f.split('.')[0]
@@ -84,6 +86,7 @@ def main():
                 writer.writerow({'id': f_id, 'segmentation': rle_mask})
 
 
+            # TODO: remove this step when running on test data
             # visualize image and prediction
             plt.figure(figsize=(10,5))
             plt.subplot(1,2,1)

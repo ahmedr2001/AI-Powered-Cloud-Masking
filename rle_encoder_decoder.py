@@ -2,14 +2,15 @@ import numpy as np
 
 def rle_encode(mask):
     """
-    Encodes a binary mask using Run-Length Encoding (RLE).
-    
+    Encodes a binary mask using Run-Length Encoding (RLE).    
     Args:
         mask (np.ndarray): 2D binary mask (0s and 1s).
-    
     Returns:
-        str: RLE-encoded string.
+        str: RLE-encoded string, or a single space " " if mask is all zeros.
     """
+    if np.sum(mask) == 0:
+        return " "  # As it seems that kaggle reject nulls. We'll handle cloud-free images with empty spaces.
+    
     pixels = mask.flatten(order='F')  # Flatten in column-major order
     pixels = np.concatenate([[0], pixels, [0]])  # Add padding to detect transitions
     runs = np.where(pixels[1:] != pixels[:-1])[0] + 1  # Get transition indices

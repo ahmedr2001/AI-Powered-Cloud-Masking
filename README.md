@@ -37,13 +37,13 @@ python inference.py --image_dir ../input_dir
 ```
 
 # Results
-Can be found in submission.csv
+Can be found in `submission.csv`
 
 # Logs
-Can be found in model_logs.txt
+Can be found in `model_logs.txt`
 
 # Training
 Kaggle notebooks used to train models included as well: `train.py`
 
 # Profiling
-When running `inference.py` of each model, the model is profiled and the result is saved to `model_logs.txt`
+When running `inference.py` of each model, the model is profiled and the result is saved to `model_logs.txt`. The functions used for profiling can be found in `profile_script.py`
