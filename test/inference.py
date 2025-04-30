@@ -1,15 +1,10 @@
 import os
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
 import tifffile
-import torchvision.transforms as T
-import matplotlib.pyplot as plt
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import cv2
-import csv
 import argparse
 import sys
 import numpy as np
@@ -18,7 +13,7 @@ from cloudnet import CloudNet
 
 sys.path.insert(1, '../')
 from profile_script import profile
-from rle_encoder_decoder import rle_decode, rle_encode
+from rle_encoder_decoder import rle_encode
 
 def normalize_img(img):
     img = img.astype('float32')
@@ -78,22 +73,6 @@ def main():
             output = cv2.resize(output, (256, 256), interpolation=cv2.INTER_NEAREST)
             rle_mask = rle_encode(output)
             rle_masks.append(rle_mask)
-            # # TODO: remove this step when running on test data
-            # # visualize image and prediction
-            # plt.figure(figsize=(10,5))
-            # plt.subplot(1,2,1)
-            # img = image.cpu().numpy().squeeze(0).transpose(1, 2, 0)
-            # # rgb
-            # img = img[..., :3]
-            # plt.imshow(img)
-
-            # plt.title('Image')
-            # plt.axis('off')
-            # plt.subplot(1,2,2)
-            # plt.imshow(output, cmap='gray')
-            # plt.title('Prediction')
-            # plt.axis('off')
-            # plt.show()
 
     submission_file['segmentation'] = rle_masks
     submission_file.to_csv('submission.csv', index=False)
