@@ -105,8 +105,6 @@ def main():
 
     image_dir = parser.parse_args().image_dir
 
-    # Error: incompatible with the original pickle file
-    # TODO: Fix error (maybe by downgrading joblib on kaggle and trying again)
     model = joblib.load('rf.pkl')
     with open('submission.csv', 'w', newline='') as csvfile:
         fieldnames = ['id', 'segmentation']

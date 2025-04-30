@@ -1,11 +1,7 @@
 import os
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 import numpy as np
 import tifffile
-import torchvision.transforms as T
-import matplotlib.pyplot as plt
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import cv2
@@ -13,12 +9,10 @@ import csv
 import argparse
 from unet import UNet
 
-import numpy as np
-
 import sys
 sys.path.insert(1, '..')
 from profile_script import profile
-from rle_encoder_decoder import rle_decode, rle_encode
+from rle_encoder_decoder import rle_encode
 
 def normalize_img(img):
     img = img.astype('float32')

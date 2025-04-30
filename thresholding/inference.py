@@ -1,17 +1,12 @@
-import pandas as pd
 import numpy as np
 import os
 import tifffile as tiff
-import matplotlib.pyplot as plt
 import csv
-
-import numpy as np
-import cv2
 import argparse
 
 import sys
 sys.path.insert(1, '..')
-from rle_encoder_decoder import rle_encode, rle_decode
+from rle_encoder_decoder import rle_encode
 
 def normalize_rgb(img):
     img = img.astype('float32')
